@@ -9,10 +9,16 @@ mod ffi {
     unsafe extern "C++" {
         include!("manifold_rs.h");
 
+        /// Manifold object, wrapper for C++ manifold object.
         type Manifold;
 
+        /// Create a sphere manifold.
         fn sphere(radius: f64, segments: u32) -> UniquePtr<Manifold>;
+
+        /// Create a cube manifold.
         fn cube(x_size: f64, y_size: f64, z_size: f64) -> UniquePtr<Manifold>;
+
+        /// Create a cylinder manifold.
         fn cylinder(
             radius_low: f64,
             radius_high: f64,
@@ -20,25 +26,42 @@ mod ffi {
             segments: u32,
         ) -> UniquePtr<Manifold>;
 
+        /// Get the union of two manifolds.
         fn union_(a: &Manifold, b: &Manifold) -> UniquePtr<Manifold>;
+
+        /// Get the intersection of two manifolds.
         fn intersection(a: &Manifold, b: &Manifold) -> UniquePtr<Manifold>;
+
+        /// Get the difference of two manifolds.
         fn difference(a: &Manifold, b: &Manifold) -> UniquePtr<Manifold>;
 
+        /// Create a mesh from a manifold.
         type Mesh;
 
+        /// Get the vertices of the mesh.
         fn vertices(self: &Mesh) -> UniquePtr<CxxVector<f32>>;
+
+        /// Get the indices of the mesh.
         fn indices(self: &Mesh) -> UniquePtr<CxxVector<u32>>;
 
+        /// Create a mesh from a manifold.
         fn mesh_from_manifold(manifold: &Manifold) -> UniquePtr<Mesh>;
+
+        /// Create a manifold from a mesh.
         fn manifold_from_mesh(mesh: &Mesh) -> UniquePtr<Manifold>;
 
+        /// Create a mesh from vertices and indices.
         fn mesh_from_vertices(vertices: &[f32], indices: &[u32]) -> UniquePtr<Mesh>;
     }
 }
 
+/// Boolean operation on manifolds.
 pub enum BooleanOp {
+    /// Union of two manifolds.
     Union,
+    /// Intersection of two manifolds.
     Intersection,
+    /// Difference of two manifolds.
     Difference,
 }
 
@@ -99,38 +122,46 @@ impl Manifold {
     }
 }
 
+/// Wrapper around a C++ mesh object.
 pub struct Mesh(cxx::UniquePtr<ffi::Mesh>);
 
+/// Implementations for the Mesh struct.
 impl Mesh {
+    /// Create a new mesh from vertices and indices.
     pub fn new(vertices: &[f32], indices: &[u32]) -> Self {
         let mesh = ffi::mesh_from_vertices(vertices, indices);
         Self(mesh)
     }
 
+    /// Get the vertices of the mesh.
     pub fn vertices(&self) -> Vec<f32> {
         let vertices_binding = self.0.vertices();
         let vertices = vertices_binding.as_ref().unwrap().as_slice();
         vertices.to_vec()
     }
 
+    /// Get the indices of the mesh.
     pub fn indices(&self) -> Vec<u32> {
         let indices_binding = self.0.indices();
         let indices = indices_binding.as_ref().unwrap().as_slice();
         indices.to_vec()
     }
 
-    pub fn manifold(&self) -> Manifold {
+    /// Get the manifold representation of the mesh.
+    pub fn to_manifold(&self) -> Manifold {
         let manifold = ffi::manifold_from_mesh(&self.0);
         Manifold(manifold)
     }
 }
 
+/// Convert Mesh to Manifold struct
 impl From<Mesh> for Manifold {
     fn from(mesh: Mesh) -> Self {
-        mesh.manifold()
+        mesh.to_manifold()
     }
 }
 
+/// Convert Manifold to Mesh struct
 impl From<Manifold> for Mesh {
     fn from(manifold: Manifold) -> Self {
         manifold.to_mesh()
