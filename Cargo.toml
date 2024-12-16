@@ -10,6 +10,18 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/WilstonOreo/manifold-rs"
 
+include = [
+    "README.md",
+    "Cargo.toml",
+    "src/**/*",
+    "manifold/CMakeLists.txt",
+    "manifold/src/**/*",
+    "manifold/include/**/*",
+    "glm/CMakeLists.txt",
+    "glm/glm/**/*",
+    "glm/cmake/*",
+]
+
 [lib]
 name = "manifold_rs"
 path = "src/lib.rs"
