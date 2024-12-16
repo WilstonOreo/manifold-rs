@@ -71,6 +71,7 @@ namespace manifold_rs
         assert(vertices.size() % 6 == 0);
         assert(indices.size() % 3 == 0);
         ::manifold::Mesh mesh;
+        mesh.numProp = 6;
         mesh.vertProperties = std::vector<float>(vertices.begin(), vertices.end());
         mesh.triVerts = std::vector<uint32_t>(indices.begin(), indices.end());
 
