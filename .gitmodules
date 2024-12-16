@@ -1,0 +1,6 @@
+[submodule "manifold"]
+	path = manifold
+	url = https://github.com/elalish/manifold/
+[submodule "glm"]
+	path = glm
+	url = https://github.com/g-truc/glm
