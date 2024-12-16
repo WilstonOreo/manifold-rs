@@ -1,5 +1,5 @@
 // Copyright © 2024 The µCAD authors <info@ucad.xyz>
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: Apache-2.0
 
 //! Rust integration of C++ library *Manifold* for geometric operations
 
