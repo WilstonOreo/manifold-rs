@@ -1,6 +1,6 @@
 #include "manifold_rs.h"
 
-#include "manifold.h"
+#include <manifold/manifold.h>
 
 namespace manifold_rs
 {
@@ -46,37 +46,17 @@ namespace manifold_rs
 
     std::unique_ptr<std::vector<float>> Mesh::vertices() const
     {
-        std::vector<float> vertices;
-        vertices.reserve(mesh->vertPos.size() * 6);
-        assert(mesh->vertPos.size() == mesh->vertNormal.size());
-        for (size_t i = 0; i < mesh->vertPos.size(); i++)
-        {
-            vertices.push_back(mesh->vertPos[i].x);
-            vertices.push_back(mesh->vertPos[i].y);
-            vertices.push_back(mesh->vertPos[i].z);
-            vertices.push_back(mesh->vertNormal[i].x);
-            vertices.push_back(mesh->vertNormal[i].y);
-            vertices.push_back(mesh->vertNormal[i].z);
-        }
-        return std::make_unique<std::vector<float>>(vertices);
+        return std::make_unique<std::vector<float>>(mesh->vertProperties);
     }
 
     std::unique_ptr<std::vector<uint32_t>> Mesh::indices() const
     {
-        std::vector<uint32_t> indices;
-        indices.reserve(mesh->triVerts.size() * 3);
-        for (size_t i = 0; i < mesh->triVerts.size(); i++)
-        {
-            indices.push_back(mesh->triVerts[i].x);
-            indices.push_back(mesh->triVerts[i].y);
-            indices.push_back(mesh->triVerts[i].z);
-        }
-        return std::make_unique<std::vector<uint32_t>>(indices);
+        return std::make_unique<std::vector<uint32_t>>(mesh->triVerts);
     }
 
     std::unique_ptr<Mesh> mesh_from_manifold(const Manifold &manifold)
     {
-        return std::make_unique<Mesh>(manifold.manifold->GetMesh());
+        return std::make_unique<Mesh>(manifold.manifold->GetMeshGL());
     }
 
     std::unique_ptr<Manifold> manifold_from_mesh(const Mesh &mesh)
@@ -85,24 +65,15 @@ namespace manifold_rs
     }
 
     std::unique_ptr<Mesh> mesh_from_vertices(
-        rust::Slice<const float> vertices, 
+        rust::Slice<const float> vertices,
         rust::Slice<const uint32_t> indices)
     {
         assert(vertices.size() % 6 == 0);
         assert(indices.size() % 3 == 0);
         ::manifold::Mesh mesh;
-        mesh.vertPos.reserve(vertices.size() / 6);
-        mesh.vertNormal.reserve(vertices.size() / 6);
-        for (size_t i = 0; i < vertices.size(); i += 6)
-        {
-            mesh.vertPos.push_back({vertices[i], vertices[i + 1], vertices[i + 2]});
-            mesh.vertNormal.push_back({vertices[i + 3], vertices[i + 4], vertices[i + 5]});
-        }
-        mesh.triVerts.reserve(indices.size() / 3);
-        for (size_t i = 0; i < indices.size(); i += 3)
-        {
-            mesh.triVerts.push_back({indices[i], indices[i + 1], indices[i + 2]});
-        }
+        mesh.vertProperties = std::vector<float>(vertices.begin(), vertices.end());
+        mesh.triVerts = std::vector<uint32_t>(indices.begin(), indices.end());
+
         return std::make_unique<Mesh>(std::move(mesh));
     }
 

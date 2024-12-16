@@ -18,26 +18,27 @@ fn main() {
     Config::new("manifold")
         .cxxflag(cxxflags) //  MSVC flag to enable exception handling
         .define("CMAKE_BUILD_TYPE", "Release")
+        .define("MANIFOLD_CROSS_SECTION", "ON")
         .define("MANIFOLD_TEST", "OFF")
         .define("BUILD_SHARED_LIBS", "OFF")
         .define("MANIFOLD_CBIND", "OFF")
         .define("MANIFOLD_EXCEPTIONS", "OFF")
         .build();
 
-    println!("cargo:rustc-link-search={out_dir}/lib");
-
     cxx_build::bridge("src/lib.rs")
         .std("c++17")
         .file("src/manifold_rs.cpp")
         .include("./src")
-        .include("../manifold/src/manifold/include")
-        .include("../manifold/src/utilities/include")
-        .include(format!("{out_dir}/build/_deps/glm-src"))
+        .include("./manifold/src/manifold/include")
+        .include("./manifold/src/utilities/include")
         .include(format!("{out_dir}/include"))
         .compile("manifold_rs");
 
+    println!("cargo:rustc-link-search={out_dir}/lib");
     println!("cargo:rustc-link-lib=static=manifold");
-    println!("cargo:rustc-link-lib=static=polygon");
+
+    println!("cargo:rustc-link-search={out_dir}/build/_deps/clipper2-build");
+    println!("cargo:rustc-link-lib=static=Clipper2");
 
     println!("cargo:rerun-if-changed=src/lib.rs");
     println!("cargo:rerun-if-changed=src/manifold_rs.h");

@@ -3,11 +3,15 @@
 #include "rust/cxx.h"
 
 #include <memory>
+#include <manifold/manifold.h>
 
 namespace manifold
 {
     class Manifold;
-    struct Mesh;
+    template <typename Precision, typename I>
+    struct MeshGLP;
+
+    using Mesh = MeshGLP<float, uint32_t>;
 } // namespace manifold
 
 namespace manifold_rs
@@ -47,6 +51,6 @@ namespace manifold_rs
     std::unique_ptr<Manifold> manifold_from_mesh(const Mesh &mesh);
 
     std::unique_ptr<Mesh> mesh_from_vertices(
-        rust::Slice<const float> vertices, 
+        rust::Slice<const float> vertices,
         rust::Slice<const uint32_t> indices);
 }
