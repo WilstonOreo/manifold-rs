@@ -59,7 +59,7 @@ namespace manifold_rs
 
     std::unique_ptr<Mesh> mesh_from_manifold(const Manifold &manifold)
     {
-        auto mesh = manifold.manifold->NumProp() == 3 ? manifold.manifold->CalculateNormals(0).GetMeshGL(0) : manifold.manifold->GetMeshGL(0);
+        auto mesh = manifold.manifold->NumProp() == 3 || manifold.manifold->NumProp() == 0 ? manifold.manifold->CalculateNormals(0).GetMeshGL(0) : manifold.manifold->GetMeshGL(0);
         assert(mesh.numProp == 6 && "Expected 6 properties per vertex");
         return std::make_unique<Mesh>(std::move(mesh));
     }
