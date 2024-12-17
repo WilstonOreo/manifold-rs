@@ -59,7 +59,9 @@ namespace manifold_rs
 
     std::unique_ptr<Mesh> mesh_from_manifold(const Manifold &manifold)
     {
-        return std::make_unique<Mesh>(manifold.manifold->GetMeshGL());
+        auto mesh = manifold.manifold->CalculateNormals(0).GetMeshGL(0);
+        assert(mesh.numProp == 6);
+        return std::make_unique<Mesh>(std::move(mesh));
     }
 
     std::unique_ptr<Manifold> manifold_from_mesh(const Mesh &mesh)
