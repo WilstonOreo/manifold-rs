@@ -59,8 +59,8 @@ namespace manifold_rs
 
     std::unique_ptr<Mesh> mesh_from_manifold(const Manifold &manifold)
     {
-        auto mesh = manifold.manifold->NumProp() == 3 || manifold.manifold->NumProp() == 0 ? manifold.manifold->CalculateNormals(0).GetMeshGL(0) : manifold.manifold->GetMeshGL(0);
-        assert(mesh.numProp == 6 && "Expected 6 properties per vertex");
+        auto mesh = manifold.manifold->GetMeshGL(0);
+        assert(mesh.numProp == 3);
         return std::make_unique<Mesh>(std::move(mesh));
     }
 
@@ -73,10 +73,10 @@ namespace manifold_rs
         rust::Slice<const float> vertices,
         rust::Slice<const uint32_t> indices)
     {
-        assert(vertices.size() % 6 == 0);
+        assert(vertices.size() % 3 == 0);
         assert(indices.size() % 3 == 0);
         ::manifold::Mesh mesh;
-        mesh.numProp = 6;
+        mesh.numProp = 3;
         mesh.vertProperties = std::vector<float>(vertices.begin(), vertices.end());
         mesh.triVerts = std::vector<uint32_t>(indices.begin(), indices.end());
 

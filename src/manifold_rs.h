@@ -78,7 +78,6 @@ namespace manifold_rs
         /// @brief Get the vertices of the mesh
         /// @details The vertex coefficients are in the following order:
         ///          * position x, y, z
-        ///          * normal x, y, z
         /// @return A vector of vertices
         std::unique_ptr<std::vector<float>> vertices() const;
 
@@ -99,7 +98,7 @@ namespace manifold_rs
     std::unique_ptr<Manifold> manifold_from_mesh(const Mesh &mesh);
 
     /// @brief Create a mesh from vertices and indices
-    /// @param vertices Vertices, interleaved in the following order: position x, y, z, normal x, y, z
+    /// @param vertices Vertices, a slice of floats where each 3 elements represent a vertex position (x, y, z)
     /// @param indices Indices
     /// @return A new mesh
     std::unique_ptr<Mesh> mesh_from_vertices(

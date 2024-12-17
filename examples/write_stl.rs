@@ -11,8 +11,6 @@ type Vec3 = cgmath::Vector3<f32>;
 struct Vertex {
     /// position
     pub pos: Vec3,
-    /// normal vector (unused)
-    pub _normal: Vec3,
 }
 
 impl Vertex {
@@ -20,7 +18,6 @@ impl Vertex {
     fn from_slice_and_offset(slice: &[f32], offset: usize) -> Self {
         Vertex {
             pos: Vec3::new(slice[offset], slice[offset + 1], slice[offset + 2]),
-            _normal: Vec3::new(slice[offset + 3], slice[offset + 4], slice[offset + 5]),
         }
     }
 }
@@ -71,9 +68,9 @@ fn write_stl(
 ) -> std::io::Result<()> {
     for i in (0..indices.len()).step_by(3) {
         Triangle(
-            Vertex::from_slice_and_offset(vertices, indices[i] as usize),
-            Vertex::from_slice_and_offset(vertices, indices[i + 1] as usize),
-            Vertex::from_slice_and_offset(vertices, indices[i + 2] as usize),
+            Vertex::from_slice_and_offset(vertices, indices[i] as usize * 3),
+            Vertex::from_slice_and_offset(vertices, indices[i + 1] as usize * 3),
+            Vertex::from_slice_and_offset(vertices, indices[i + 2] as usize * 3),
         )
         .write_stl(writer)?;
     }
@@ -105,6 +102,16 @@ fn write_manifold_to_stl_file(
 
 fn main() -> std::io::Result<()> {
     write_manifold_to_stl_file(&manifold_rs::Manifold::sphere(4.0, 128), "sphere.stl")?;
+
+    {
+        let manifold = manifold_rs::Manifold::cylinder(1.0, 4.0, 3.0, 32);
+
+        // Convert the manifold to a mesh and back to a manifold
+        let mesh = manifold.to_mesh();
+        let manifold = mesh.to_manifold();
+
+        write_manifold_to_stl_file(&manifold, "cylinder.stl")?;
+    }
 
     Ok(())
 }
