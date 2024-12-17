@@ -10,20 +10,12 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/WilstonOreo/manifold-rs"
 
-include = [
-    "README.md",
-    "Cargo.toml",
-    "build.rs",
-    "LICENSE",
-    "src/**/*",
-    "manifold/CMakeLists.txt",
-    "manifold/bindings/**/*",
-    "manifold/cmake/*",
-    "manifold/include/**/*",
-    "manifold/src/**/*",
-    "glm/CMakeLists.txt",
-    "glm/glm/**/*",
-    "glm/cmake/*",
+exclude = [
+    "glm/doc/**/*",
+    "glm/test/**/*",
+    "manifold/docs/**/*",
+    "manifold/test/**/*",
+    "manifold/samples/**/*",
 ]
 
 [lib]
