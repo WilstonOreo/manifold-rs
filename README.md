@@ -8,7 +8,11 @@ This crate provides Rust wrappers for the Manifold C++ API.
 
 Add this to your `Cargo.toml`:
 
-```
+```toml
 [dependencies]
-manifold-rs = "0.1"
+manifold-rs = "0.4"
 ```
+
+## Example
+
+See the [examples](examples) directory for examples on how to use the library.
