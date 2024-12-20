@@ -20,6 +20,12 @@ mod ffi {
         /// Manifold object, wrapper for C++ manifold object.
         type Manifold;
 
+        /// Slice the manifold into a set of polygons.
+        fn slice(self: &Manifold, height: f64) -> UniquePtr<Polygons>;
+
+        /// Project the manifold onto a plane and return the resulting polygons.
+        fn project(self: &Manifold) -> UniquePtr<Polygons>;
+
         /// Create a sphere manifold.
         fn sphere(radius: f64, segments: u32) -> UniquePtr<Manifold>;
 
@@ -90,10 +96,35 @@ pub enum BooleanOp {
     Difference,
 }
 
+/// Manifold rust wrapper for C++ polygons object.
+pub struct Polygons(cxx::UniquePtr<ffi::Polygons>);
+
+impl Polygons {
+    /// Get the number of polygons.
+    pub fn size(&self) -> usize {
+        self.0.size()
+    }
+
+    /// Get the number of vertices in a polygon.
+    pub fn get_as_slice(&self, i: usize) -> &[f64] {
+        self.0.get_as_slice(i)
+    }
+}
+
 /// Manifold rust wrapper for C++ manifold object.
 pub struct Manifold(cxx::UniquePtr<ffi::Manifold>);
 
 impl Manifold {
+    /// Slice the manifold into a set of polygons.
+    pub fn slice(&self, height: f64) -> Polygons {
+        Polygons(self.0.slice(height))
+    }
+
+    /// Project the manifold onto a plane and return the resulting polygons.
+    pub fn project(&self) -> Polygons {
+        Polygons(self.0.project())
+    }
+
     /// Create a sphere manifold.
     pub fn sphere(radius: f64, segments: u32) -> Self {
         Self(ffi::sphere(radius, segments))
