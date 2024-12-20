@@ -66,6 +66,7 @@ fn write_stl(
     indices: &[u32],
     writer: &mut impl std::io::Write,
 ) -> std::io::Result<()> {
+    writeln!(writer, "solid")?;
     for i in (0..indices.len()).step_by(3) {
         Triangle(
             Vertex::from_slice_and_offset(vertices, indices[i] as usize * 3),
@@ -74,7 +75,21 @@ fn write_stl(
         )
         .write_stl(writer)?;
     }
+    writeln!(writer, "endsolid")?;
+
     Ok(())
+}
+
+fn generate_circle(radius: f64, offset: (f64, f64), segments: usize) -> Vec<f64> {
+    let mut circle = Vec::new();
+    for i in 0..segments {
+        let angle = 2.0 * std::f64::consts::PI * i as f64 / segments as f64;
+        circle.append(&mut vec![
+            radius * angle.cos() + offset.0,
+            radius * angle.sin() + offset.1,
+        ]);
+    }
+    circle
 }
 
 /// Write a manifold to an STL file
@@ -83,17 +98,11 @@ fn write_manifold_to_stl_file(
     filename: &str,
 ) -> std::io::Result<()> {
     let mesh = manifold.to_mesh();
-
     let vertices = mesh.vertices();
     let indices = mesh.indices();
 
     let mut writer = std::fs::File::create(filename)?;
-
-    writeln!(&mut writer, "solid")?;
-
     write_stl(&vertices, &indices, &mut writer)?;
-
-    writeln!(&mut writer, "endsolid")?;
 
     println!("Wrote {}", filename);
 
@@ -118,11 +127,7 @@ fn main() -> std::io::Result<()> {
     // Generate torus with `revolve` and write resulting mesh to an STL file
     {
         // Generate circle with 32 vertices
-        let mut circle = Vec::new();
-        for i in 0..32 {
-            let angle = 2.0 * std::f64::consts::PI * i as f64 / 32.0;
-            circle.append(&mut vec![angle.cos() + 4.0, angle.sin()]);
-        }
+        let circle = generate_circle(2.0, (4.0, 0.0), 32);
 
         // Revolve the circle 360° around the z-axis
         let manifold = manifold_rs::Manifold::revolve(&[circle.as_slice()], 32, 360.0);
@@ -133,13 +138,15 @@ fn main() -> std::io::Result<()> {
     // Generate a tube via `extrude` and write resulting mesh to an STL file
     {
         // Generate circle with 32 vertices
-        let mut inner_circle = Vec::new();
-        let mut outer_circle = Vec::new();
-        for i in 0..32 {
-            let angle = 2.0 * std::f64::consts::PI * i as f64 / 32.0;
-            outer_circle.append(&mut vec![angle.cos(), angle.sin()]);
-            inner_circle.append(&mut vec![0.3 * angle.cos(), -0.3 * angle.sin()]);
-        }
+        let inner_circle = generate_circle(0.3, (0.0, 0.0), 32);
+        let outer_circle = generate_circle(1.0, (0.0, 0.0), 32);
+
+        // CCW winding order to create a hole in the tube
+        let inner_circle = inner_circle
+            .into_iter()
+            .enumerate()
+            .map(|(i, x)| if i % 2 == 0 { x } else { -x })
+            .collect::<Vec<_>>();
 
         // Extrude the circle along the z-axis
         let manifold = manifold_rs::Manifold::extrude(
@@ -154,5 +161,31 @@ fn main() -> std::io::Result<()> {
         write_manifold_to_stl_file(&manifold, "tube.stl")?;
     }
 
+    // Convex hull of two circles
+    {
+        let left_circle = generate_circle(1.0, (-1.0, 0.0), 32);
+        let right_circle = generate_circle(1.0, (1.0, 0.0), 32);
+
+        // Extrude the circle along the z-axis
+        let manifold = manifold_rs::Manifold::extrude(
+            &[left_circle.as_slice(), right_circle.as_slice()],
+            4.0,
+            16,
+            0.0,
+            1.0,
+            1.0,
+        );
+        let manifold = manifold.hull();
+
+        write_manifold_to_stl_file(&manifold, "hull.stl")?;
+    }
+
+    // Trim a cylinder by a plane
+    {
+        let manifold = manifold_rs::Manifold::cylinder(1.0, 1.0, 3.0, 32);
+        let manifold = manifold.trim_by_plane(0.5, 0.5, 0.5, 0.0);
+
+        write_manifold_to_stl_file(&manifold, "cylinder_trimmed.stl")?;
+    }
     Ok(())
 }
