@@ -1,5 +1,3 @@
-use std::io::Write;
-
 use cgmath::InnerSpace;
 
 extern crate manifold_rs;
