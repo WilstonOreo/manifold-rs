@@ -49,6 +49,15 @@ mod ffi {
         /// Get the difference of two manifolds.
         fn difference(a: &Manifold, b: &Manifold) -> UniquePtr<Manifold>;
 
+        /// Trim by a plane.
+        fn trim_by_plane(
+            self: &Manifold,
+            x: f64,
+            y: f64,
+            z: f64,
+            offset: f64,
+        ) -> UniquePtr<Manifold>;
+
         /// Create a mesh from a manifold.
         type Mesh;
 
@@ -123,6 +132,11 @@ impl Manifold {
     /// Project the manifold onto a plane and return the resulting polygons.
     pub fn project(&self) -> Polygons {
         Polygons(self.0.project())
+    }
+
+    /// Trim by a plane.
+    pub fn trim_by_plane(&self, x: f64, y: f64, z: f64, offset: f64) -> Manifold {
+        Manifold(self.0.trim_by_plane(x, y, z, offset))
     }
 
     /// Create a sphere manifold.

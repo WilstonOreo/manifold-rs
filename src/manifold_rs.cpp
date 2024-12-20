@@ -36,6 +36,11 @@ namespace manifold_rs
         return std::make_unique<Polygons>(manifold->Project());
     }
 
+    std::unique_ptr<Manifold> Manifold::trim_by_plane(double x, double y, double z, double offset) const
+    {
+        return std::make_unique<Manifold>(manifold->TrimByPlane({x, y, z}, offset));
+    }
+
     std::unique_ptr<Manifold> tetrahedron()
     {
         return std::make_unique<Manifold>(::manifold::Manifold::Tetrahedron());

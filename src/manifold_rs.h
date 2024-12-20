@@ -48,6 +48,13 @@ namespace manifold_rs
         /// @brief Project the manifold
         std::unique_ptr<Polygons> project() const;
 
+        /// @brief Trim the manifold by a plane
+        /// @param x X coordinate of normal vector of the plane
+        /// @param y Y coordinate of normal vector of the plane
+        /// @param z Z coordinate of normal vector of the plane
+        /// @param offset Offset of the plane
+        std::unique_ptr<Manifold> trim_by_plane(double x, double y, double z, double offset) const;
+
         std::unique_ptr<::manifold::Manifold> manifold;
     };
 
