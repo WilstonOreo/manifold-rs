@@ -15,6 +15,24 @@ namespace manifold
 
 namespace manifold_rs
 {
+    /// @brief Wrapper around manifold::Polygons
+    /// @details This class will be exposed to Rust
+    class Polygons
+    {
+    public:
+        Polygons();
+        Polygons(::manifold::Polygons &&polygons);
+        ~Polygons();
+
+        /// @brief Get the number of polygons
+        size_t size() const;
+
+        /// @brief Get a polygon by index as a slice of doubles
+        rust::Slice<const double> get_as_slice(size_t index) const;
+
+        std::unique_ptr<::manifold::Polygons> polygons;
+    };
+
     /// @brief Wrapper around manifold::Manifold
     /// @details This class will be exposed to Rust
     class Manifold
@@ -24,14 +42,17 @@ namespace manifold_rs
         Manifold(::manifold::Manifold &&manifold);
         ~Manifold();
 
+        /// @brief Slice the manifold at a given height
+        std::unique_ptr<Polygons> slice(double height) const;
+
+        /// @brief Project the manifold
+        std::unique_ptr<Polygons> project() const;
+
         std::unique_ptr<::manifold::Manifold> manifold;
     };
 
-    /// @brief Create a sphere
-    /// @param radius Radius of the sphere
-    /// @param circular_segments  Number of circular segments
-    /// @return A new sphere as a Manifold
-    std::unique_ptr<Manifold> sphere(double radius, uint32_t circular_segments);
+    /// @brief Create a new empty manifold
+    std::unique_ptr<Manifold> tetrahedron();
 
     /// @brief Create a cube
     /// @param x_size A size of the cube in x direction
@@ -39,6 +60,12 @@ namespace manifold_rs
     /// @param z_size A size of the cube in z direction
     /// @return A new cube as a Manifold
     std::unique_ptr<Manifold> cube(double x_size, double y_size, double z_size);
+
+    /// @brief Create a sphere
+    /// @param radius Radius of the sphere
+    /// @param circular_segments  Number of circular segments
+    /// @return A new sphere as a Manifold
+    std::unique_ptr<Manifold> sphere(double radius, uint32_t circular_segments);
 
     /// @brief Create a cylinder
     /// @param radius_low Lower radius of the cylinder
@@ -65,6 +92,16 @@ namespace manifold_rs
     /// @param b Second manifold
     /// @return A new manifold as a result of the difference operation
     std::unique_ptr<Manifold> difference(const Manifold &a, const Manifold &b);
+
+    /// @brief Extrude a multi-polygon to create a 3D shape
+    std::unique_ptr<Manifold> extrude(
+        rust::Slice<const rust::Slice<const double>> multi_polygon_data,
+        double height, uint32_t divisions, double twist_degrees, double scale_top_x, double scale_top_y);
+
+    /// @brief Revolve a multi-polygon to create a 3D shape
+    std::unique_ptr<Manifold> revolve(
+        rust::Slice<const rust::Slice<const double>> multi_polygon_data,
+        uint32_t circular_segments, double angle);
 
     /// @brief A mesh, which is a collection of vertices and indices
     /// @details This class will be exposed to Rust
@@ -104,15 +141,4 @@ namespace manifold_rs
     std::unique_ptr<Mesh> mesh_from_vertices(
         rust::Slice<const float> vertices,
         rust::Slice<const uint32_t> indices);
-
-    /// @brief Extrude a multi-polygon to create a 3D shape
-    std::unique_ptr<Manifold> extrude(
-        rust::Slice<const rust::Slice<const double>> multi_polygon_data,
-        double height, uint32_t divisions, double twist_degrees, double scale_top_x, double scale_top_y);
-
-    /// @brief Revolve a multi-polygon to create a 3D shape
-    std::unique_ptr<Manifold> revolve(
-        rust::Slice<const rust::Slice<const double>> multi_polygon_data,
-        uint32_t circular_segments, double angle);
-
 } // namespace manifold_rs

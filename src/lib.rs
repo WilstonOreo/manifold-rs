@@ -9,6 +9,14 @@ mod ffi {
     unsafe extern "C++" {
         include!("manifold_rs.h");
 
+        type Polygons;
+
+        /// Get the number of polygons.
+        fn size(self: &Polygons) -> usize;
+
+        /// Get the number of vertices in a polygon.
+        fn get_as_slice(self: &Polygons, i: usize) -> &[f64];
+
         /// Manifold object, wrapper for C++ manifold object.
         type Manifold;
 

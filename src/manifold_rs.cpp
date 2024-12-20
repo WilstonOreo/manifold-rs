@@ -7,18 +7,48 @@
 
 namespace manifold_rs
 {
+    Polygons::Polygons() : polygons(std::make_unique<::manifold::Polygons>()) {}
+    Polygons::Polygons(::manifold::Polygons &&polygons) : polygons(std::make_unique<::manifold::Polygons>(std::move(polygons))) {}
+    Polygons::~Polygons() {}
+
+    size_t Polygons::size() const
+    {
+        return polygons->size();
+    }
+
+    rust::Slice<const double> Polygons::get_as_slice(size_t index) const
+    {
+        auto &polygon = (*polygons)[index];
+        return rust::Slice<const double>(static_cast<double *>((void *)polygon.data()), polygon.size() * 2);
+    }
+
     Manifold::Manifold() : manifold(std::make_unique<::manifold::Manifold>()) {}
     Manifold::Manifold(::manifold::Manifold &&manifold) : manifold(std::make_unique<::manifold::Manifold>(std::move(manifold))) {}
     Manifold::~Manifold() {}
 
-    std::unique_ptr<Manifold> sphere(double radius, uint32_t circular_segments)
+    std::unique_ptr<Polygons> Manifold::slice(double height) const
     {
-        return std::make_unique<Manifold>(::manifold::Manifold::Sphere(radius, circular_segments));
+        return std::make_unique<Polygons>(manifold->Slice(height));
+    }
+
+    std::unique_ptr<Polygons> Manifold::project() const
+    {
+        return std::make_unique<Polygons>(manifold->Project());
+    }
+
+    std::unique_ptr<Manifold> tetrahedron()
+    {
+        return std::make_unique<Manifold>(::manifold::Manifold::Tetrahedron());
     }
 
     std::unique_ptr<Manifold> cube(double x_size, double y_size, double z_size)
     {
         return std::make_unique<Manifold>(::manifold::Manifold::Cube({x_size, y_size, z_size}));
+    }
+
+    std::unique_ptr<Manifold> sphere(double radius, uint32_t circular_segments)
+    {
+        return std::make_unique<Manifold>(::manifold::Manifold::Sphere(radius, circular_segments));
     }
 
     std::unique_ptr<Manifold> cylinder(double radius_low, double radius_height, double height, uint32_t circular_segments)
