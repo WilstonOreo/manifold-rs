@@ -104,4 +104,15 @@ namespace manifold_rs
     std::unique_ptr<Mesh> mesh_from_vertices(
         rust::Slice<const float> vertices,
         rust::Slice<const uint32_t> indices);
-}
+
+    /// @brief Extrude a multi-polygon to create a 3D shape
+    std::unique_ptr<Manifold> extrude(
+        rust::Slice<const rust::Slice<const double>> multi_polygon_data,
+        double height, uint32_t divisions, double twist_degrees, double scale_top_x, double scale_top_y);
+
+    /// @brief Revolve a multi-polygon to create a 3D shape
+    std::unique_ptr<Manifold> revolve(
+        rust::Slice<const rust::Slice<const double>> multi_polygon_data,
+        uint32_t circular_segments, double angle);
+
+} // namespace manifold_rs

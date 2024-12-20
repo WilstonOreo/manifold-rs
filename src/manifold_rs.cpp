@@ -83,4 +83,33 @@ namespace manifold_rs
         return std::make_unique<Mesh>(std::move(mesh));
     }
 
+    ::manifold::Polygons to_polygons(rust::Slice<const rust::Slice<const double>> multi_polygon_data)
+    {
+        ::manifold::Polygons polygons;
+        for (auto &polygon_data : multi_polygon_data)
+        {
+            assert(polygon_data.size() % 2 == 0);
+
+            // Create SimplePolygon from rust::Slice<const float> via memcpy
+            // without using a loop
+            ::manifold::SimplePolygon p(polygon_data.size() / 2);
+            memcpy(p.data(), polygon_data.data(), polygon_data.size() * sizeof(double));
+        }
+        return polygons;
+    }
+
+    std::unique_ptr<Manifold> extrude(
+        rust::Slice<const rust::Slice<const double>> multi_polygon_data,
+        double height, uint32_t divisions, double twist_degrees, double scale_top_x, double scale_top_y)
+    {
+        return std::make_unique<Manifold>(::manifold::Manifold::Extrude(to_polygons(multi_polygon_data), height, divisions, twist_degrees, {scale_top_x, scale_top_y}));
+    }
+
+    std::unique_ptr<Manifold> revolve(
+        rust::Slice<const rust::Slice<const double>> multi_polygon_data,
+        uint32_t circular_segments, double revolve_degrees)
+    {
+        return std::make_unique<Manifold>(::manifold::Manifold::Revolve(to_polygons(multi_polygon_data), circular_segments, revolve_degrees));
+    }
+
 } // namespace manifold_rs

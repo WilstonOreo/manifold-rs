@@ -52,6 +52,23 @@ mod ffi {
 
         /// Create a mesh from vertices and indices.
         fn mesh_from_vertices(vertices: &[f32], indices: &[u32]) -> UniquePtr<Mesh>;
+
+        /// Extrude a polygon to create a manifold.
+        fn extrude(
+            multi_polygon_data: &[&[f64]],
+            height: f64,
+            n_divisions: u32,
+            twist_degrees: f64,
+            scale_top_x: f64,
+            scale_top_y: f64,
+        ) -> UniquePtr<Manifold>;
+
+        /// Revolve a polygon to create a manifold.
+        fn revolve(
+            multi_polygon_data: &[&[f64]],
+            circular_segments: u32,
+            revolve_degrees: f64,
+        ) -> UniquePtr<Manifold>;
     }
 }
 
