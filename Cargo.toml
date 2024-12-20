@@ -3,7 +3,7 @@
 
 [package]
 name = "manifold-rs"
-version = "0.3.3"
+version = "0.4.0"
 description = "Rust wrapper for manifold"
 edition = "2021"
 license = "MIT OR Apache-2.0"
