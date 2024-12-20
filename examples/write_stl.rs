@@ -101,8 +101,10 @@ fn write_manifold_to_stl_file(
 }
 
 fn main() -> std::io::Result<()> {
+    // Write sphere to an STL file
     write_manifold_to_stl_file(&manifold_rs::Manifold::sphere(4.0, 128), "sphere.stl")?;
 
+    // Write cylinder to an STL file
     {
         let manifold = manifold_rs::Manifold::cylinder(1.0, 4.0, 3.0, 32);
 
@@ -111,6 +113,21 @@ fn main() -> std::io::Result<()> {
         let manifold = mesh.to_manifold();
 
         write_manifold_to_stl_file(&manifold, "cylinder.stl")?;
+    }
+
+    // Generate torus with `revolve` and write resulting mesh to an STL file
+    {
+        // Generate circle with 32 vertices
+        let mut circle = Vec::new();
+        for i in 0..32 {
+            let angle = 2.0 * std::f64::consts::PI * i as f64 / 32.0;
+            circle.append(&mut vec![angle.cos() + 4.0, angle.sin()]);
+        }
+
+        // Revolve the circle 360° around the z-axis
+        let manifold = manifold_rs::Manifold::revolve(&[circle.as_slice()], 32, 360.0);
+
+        write_manifold_to_stl_file(&manifold, "torus.stl")?;
     }
 
     Ok(())

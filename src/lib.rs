@@ -124,6 +124,38 @@ impl Manifold {
         }
     }
 
+    /// Extrude a polygon to create a manifold.
+    pub fn extrude(
+        multi_polygon_data: &[&[f64]],
+        height: f64,
+        n_divisions: u32,
+        twist_degrees: f64,
+        scale_top_x: f64,
+        scale_top_y: f64,
+    ) -> Self {
+        Self(ffi::extrude(
+            multi_polygon_data,
+            height,
+            n_divisions,
+            twist_degrees,
+            scale_top_x,
+            scale_top_y,
+        ))
+    }
+
+    /// Revolve a polygon to create a manifold.
+    pub fn revolve(
+        multi_polygon_data: &[&[f64]],
+        circular_segments: u32,
+        revolve_degrees: f64,
+    ) -> Self {
+        Self(ffi::revolve(
+            multi_polygon_data,
+            circular_segments,
+            revolve_degrees,
+        ))
+    }
+
     /// Get the mesh representation of the manifold.
     pub fn to_mesh(&self) -> Mesh {
         Mesh(ffi::mesh_from_manifold(&self.0))
