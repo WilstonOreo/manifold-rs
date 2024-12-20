@@ -130,5 +130,29 @@ fn main() -> std::io::Result<()> {
         write_manifold_to_stl_file(&manifold, "torus.stl")?;
     }
 
+    // Generate a tube via `extrude` and write resulting mesh to an STL file
+    {
+        // Generate circle with 32 vertices
+        let mut inner_circle = Vec::new();
+        let mut outer_circle = Vec::new();
+        for i in 0..32 {
+            let angle = 2.0 * std::f64::consts::PI * i as f64 / 32.0;
+            outer_circle.append(&mut vec![angle.cos(), angle.sin()]);
+            inner_circle.append(&mut vec![0.3 * angle.cos(), -0.3 * angle.sin()]);
+        }
+
+        // Extrude the circle along the z-axis
+        let manifold = manifold_rs::Manifold::extrude(
+            &[outer_circle.as_slice(), inner_circle.as_slice()],
+            4.0,
+            16,
+            0.0,
+            1.0,
+            1.0,
+        );
+
+        write_manifold_to_stl_file(&manifold, "tube.stl")?;
+    }
+
     Ok(())
 }
