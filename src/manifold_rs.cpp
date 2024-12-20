@@ -41,6 +41,11 @@ namespace manifold_rs
         return std::make_unique<Manifold>(manifold->TrimByPlane({x, y, z}, offset));
     }
 
+    std::unique_ptr<Manifold> Manifold::hull() const
+    {
+        return std::make_unique<Manifold>(manifold->Hull());
+    }
+
     std::unique_ptr<Manifold> tetrahedron()
     {
         return std::make_unique<Manifold>(::manifold::Manifold::Tetrahedron());

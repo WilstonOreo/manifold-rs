@@ -55,6 +55,9 @@ namespace manifold_rs
         /// @param offset Offset of the plane
         std::unique_ptr<Manifold> trim_by_plane(double x, double y, double z, double offset) const;
 
+        /// @brief Calculate the convex hull
+        std::unique_ptr<Manifold> hull() const;
+
         std::unique_ptr<::manifold::Manifold> manifold;
     };
 
