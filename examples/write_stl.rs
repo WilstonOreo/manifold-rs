@@ -4,7 +4,7 @@ extern crate manifold_rs;
 
 type Vec3 = cgmath::Vector3<f32>;
 
-/// Vertex with position and normal vector
+/// Vertex with position
 #[derive(Clone, Copy, Debug)]
 struct Vertex {
     /// position

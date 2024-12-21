@@ -61,24 +61,6 @@ mod ffi {
         /// Convex hull.
         fn hull(self: &Manifold) -> UniquePtr<Manifold>;
 
-        /// Create a mesh from a manifold.
-        type Mesh;
-
-        /// Get the vertices of the mesh.
-        fn vertices(self: &Mesh) -> UniquePtr<CxxVector<f32>>;
-
-        /// Get the indices of the mesh.
-        fn indices(self: &Mesh) -> UniquePtr<CxxVector<u32>>;
-
-        /// Create a mesh from a manifold.
-        fn mesh_from_manifold(manifold: &Manifold) -> UniquePtr<Mesh>;
-
-        /// Create a manifold from a mesh.
-        fn manifold_from_mesh(mesh: &Mesh) -> UniquePtr<Manifold>;
-
-        /// Create a mesh from vertices and indices.
-        fn mesh_from_vertices(vertices: &[f32], indices: &[u32]) -> UniquePtr<Mesh>;
-
         /// Extrude a polygon to create a manifold.
         fn extrude(
             multi_polygon_data: &[&[f64]],
@@ -95,6 +77,27 @@ mod ffi {
             circular_segments: u32,
             revolve_degrees: f64,
         ) -> UniquePtr<Manifold>;
+
+        /// Manifold object, wrapper for C++ mesh object.
+        type Mesh;
+
+        /// Get the vertices of the mesh.
+        fn vertices(self: &Mesh) -> UniquePtr<CxxVector<f32>>;
+
+        /// Get the indices of the mesh.
+        fn indices(self: &Mesh) -> UniquePtr<CxxVector<u32>>;
+
+        /// Create a mesh from a manifold.
+        fn mesh_from_manifold(manifold: &Manifold) -> UniquePtr<Mesh>;
+
+        /// Create a manifold from a mesh.
+        fn manifold_from_mesh(mesh: &Mesh) -> UniquePtr<Manifold>;
+
+        /// Create a mesh from vertices and indices.
+        ///
+        /// The vertices are a flat array of floats containing the x, y, z coordinates of each vertex.
+        /// The indices are a flat array of unsigned integers containing the indices of the vertices.
+        fn mesh_from_vertices(vertices: &[f32], indices: &[u32]) -> UniquePtr<Mesh>;
     }
 }
 
@@ -177,6 +180,7 @@ impl Manifold {
         Self(ffi::difference(self.inner(), b.inner()))
     }
 
+    /// Boolean operation on manifolds.
     pub fn boolean_op(&self, b: &Self, op: crate::BooleanOp) -> Self {
         match op {
             crate::BooleanOp::Union => self.union(b),
@@ -222,6 +226,7 @@ impl Manifold {
         Mesh(ffi::mesh_from_manifold(&self.0))
     }
 
+    /// Create a manifold from a mesh.
     pub fn from_mesh(mesh: Mesh) -> Self {
         mesh.into()
     }
