@@ -4,6 +4,7 @@
 #include "manifold_rs.h"
 
 #include <manifold/manifold.h>
+#include <cstring> // memcpy
 
 namespace manifold_rs
 {
