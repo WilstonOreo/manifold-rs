@@ -4,6 +4,11 @@
 use cmake::Config;
 
 fn main() {
+    // Skip building the library when building documentation
+    if std::env::var("DOCS_RS").is_ok() {
+        return;
+    }
+
     let out_dir = std::env::var("OUT_DIR").unwrap();
 
     std::env::set_var("CMAKE_PREFIX_PATH", format!("{out_dir}/build/glm"));
