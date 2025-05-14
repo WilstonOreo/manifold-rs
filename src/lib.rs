@@ -61,6 +61,15 @@ mod ffi {
         /// Convex hull.
         fn hull(self: &Manifold) -> UniquePtr<Manifold>;
 
+        /// Translate the manifold.
+        fn translate(self: &Manifold, x: f64, y: f64, z: f64) -> UniquePtr<Manifold>;
+
+        /// Scale the manifold.
+        fn scale(self: &Manifold, x: f64, y: f64, z: f64) -> UniquePtr<Manifold>;
+        
+        /// Rotate the manifold.
+        fn rotate(self: &Manifold, x: f64, y: f64, z: f64) -> UniquePtr<Manifold>;
+
         /// Extrude a polygon to create a manifold.
         fn extrude(
             multi_polygon_data: &[&[f64]],
