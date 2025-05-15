@@ -66,7 +66,7 @@ mod ffi {
 
         /// Scale the manifold.
         fn scale(self: &Manifold, x: f64, y: f64, z: f64) -> UniquePtr<Manifold>;
-        
+
         /// Rotate the manifold.
         fn rotate(self: &Manifold, x: f64, y: f64, z: f64) -> UniquePtr<Manifold>;
 
@@ -157,6 +157,21 @@ impl Manifold {
     /// Convex hull.
     pub fn hull(&self) -> Self {
         Self(self.0.hull())
+    }
+
+    /// Translate the manifold.
+    pub fn translate(&self, x: f64, y: f64, z: f64) -> Self {
+        Self(self.0.translate(x, y, z))
+    }
+
+    /// Scale the manifold.
+    pub fn scale(&self, x: f64, y: f64, z: f64) -> Self{
+        Self(self.0.scale(x, y, z))
+    }
+
+    /// Rotate the manifold.
+    pub fn rotate(&self, x: f64, y: f64, z: f64) -> Self {
+        Self(self.0.rotate(x, y, z))
     }
 
     /// Create a sphere manifold.
