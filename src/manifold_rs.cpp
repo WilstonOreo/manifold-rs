@@ -58,7 +58,7 @@ namespace manifold_rs
     }
     std::unique_ptr<Manifold> Manifold::rotate(double x_degrees, double y_degrees, double z_degrees) const
     {
-        return std::make_unique<Manifold>(manifold->Rotate({x_degrees, y_degrees, z_degrees}));
+        return std::make_unique<Manifold>(manifold->Rotate(x_degrees, y_degrees, z_degrees));
     }
 
     std::unique_ptr<Manifold> tetrahedron()

@@ -59,13 +59,13 @@ namespace manifold_rs
         std::unique_ptr<Manifold> hull() const;
 
         /// @brief Translate the manifold
-        Manifold translate(double x, double y, double z) const;
+        std::unique_ptr<Manifold> translate(double x, double y, double z) const;
 
         /// @brief Scale the manifold
-        Manifold scale(double x, double y, double z) const;
+        std::unique_ptr<Manifold> scale(double x, double y, double z) const;
 
         /// @brief Rotate the manifold
-        Manifold rotate(double x_degrees, double y_degrees = 0.0,
+        std::unique_ptr<Manifold> rotate(double x_degrees, double y_degrees = 0.0,
                         double z_degrees = 0.0) const;
 
         std::unique_ptr<::manifold::Manifold> manifold;
