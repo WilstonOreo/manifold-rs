@@ -47,6 +47,20 @@ namespace manifold_rs
         return std::make_unique<Manifold>(manifold->Hull());
     }
 
+    std::unique_ptr<Manifold> Manifold::translate(double x, double y, double z) const
+    {
+        return std::make_unique<Manifold>(manifold->Translate({x, y, z}));
+    }
+
+    std::unique_ptr<Manifold> Manifold::scale(double x, double y, double z) const
+    {
+        return std::make_unique<Manifold>(manifold->Scale({x, y, z}));
+    }
+    std::unique_ptr<Manifold> Manifold::rotate(double x_degrees, double y_degrees, double z_degrees) const
+    {
+        return std::make_unique<Manifold>(manifold->Rotate(x_degrees, y_degrees, z_degrees));
+    }
+
     std::unique_ptr<Manifold> tetrahedron()
     {
         return std::make_unique<Manifold>(::manifold::Manifold::Tetrahedron());
