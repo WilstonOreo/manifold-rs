@@ -1,36 +1,6 @@
-use std::f32::consts::PI;
-
-use bevy::{color::palettes::tailwind::*, picking::pointer::PointerInteraction, prelude::*};
-
+use bevy::{color::palettes::tailwind::*, prelude::*};
+#[allow(unused_imports)]
 use bevy_panorbit_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
-
-/// Vertex with position
-#[derive(Clone, Copy, Debug)]
-struct Vertex(bevy::math::Vec3);
-
-impl Vertex {
-    /// Create a vertex from a slice and an offset
-    fn from_slice_and_offset(slice: &[f32], offset: usize) -> Self {
-        Self(bevy::math::Vec3::new(
-            slice[offset],
-            slice[offset + 1],
-            slice[offset + 2],
-        ))
-    }
-}
-
-/// Triangle
-#[derive(Clone, Copy, Debug)]
-struct Triangle<T>(pub T, pub T, pub T);
-
-impl Triangle<Vertex> {
-    /// Calculate the normal of the triangle
-    fn normal(&self) -> Vec3 {
-        let u = self.1 .0 - self.0 .0;
-        let v = self.2 .0 - self.0 .0;
-        u.cross(v).normalize()
-    }
-}
 
 pub struct ManifoldPlugin;
 
@@ -40,11 +10,37 @@ impl ManifoldPlugin {
         mut meshes: ResMut<Assets<Mesh>>,
         mut materials: ResMut<Assets<StandardMaterial>>,
     ) {
-        let manifold = Self::cylinder_manifold(1.0, 3.0).boolean_op(
-            &Self::cylinder_manifold(0.5, 4.0),
-            manifold_rs::BooleanOp::Difference,
-        );
+        let tube = Self::cylinder_manifold(1.0, 3.0)
+            .boolean_op(
+                &Self::cylinder_manifold(0.5, 4.0),
+                manifold_rs::BooleanOp::Difference,
+            )
+            .translate(-1.5, -1.5, 0.0);
 
+        Self::add_manifold(&mut commands, &mut meshes, &mut materials, tube);
+
+        let tube_with_normals = Self::cylinder_manifold(1.0, 3.0)
+            .boolean_op(
+                &Self::cylinder_manifold(0.5, 4.0),
+                manifold_rs::BooleanOp::Difference,
+            )
+            .calculate_normals(0, 50.0)
+            .translate(1.5, 1.5, 0.0);
+
+        Self::add_manifold(
+            &mut commands,
+            &mut meshes,
+            &mut materials,
+            tube_with_normals,
+        );
+    }
+
+    fn add_manifold(
+        commands: &mut Commands,
+        meshes: &mut ResMut<Assets<Mesh>>,
+        materials: &mut ResMut<Assets<StandardMaterial>>,
+        manifold: manifold_rs::Manifold,
+    ) {
         let manifold_mesh_handle: Handle<Mesh> = meshes.add(Self::manifold_to_bevy_mesh(manifold));
 
         let white_matl = materials.add(Color::srgb(0.5, 0.5, 0.5));
@@ -88,36 +84,59 @@ impl ManifoldPlugin {
         }
     }
 
-    // Convert Manifold to bevy mesh
+    /// Convert Manifold to bevy mesh
     fn manifold_to_bevy_mesh(manifold: manifold_rs::Manifold) -> Mesh {
         let mesh = manifold.to_mesh();
 
         let vertices = mesh.vertices();
         let indices = mesh.indices();
 
-        let vertices = vertices
-            .chunks(3)
-            .map(|c| -> [f32; 3] { c.try_into().expect("Chunk size should be 3") })
-            .collect::<Vec<[f32; 3]>>();
+        match mesh.num_props() {
+            // Vertex without normals
+            3 => {
+                let vertices = vertices
+                    .chunks(3)
+                    .map(|c| -> [f32; 3] { c.try_into().expect("Chunk size should be 3") })
+                    .collect::<Vec<[f32; 3]>>();
 
-        Mesh::new(
-            bevy::render::mesh::PrimitiveTopology::TriangleList,
-            bevy::asset::RenderAssetUsages::MAIN_WORLD
-                | bevy::asset::RenderAssetUsages::RENDER_WORLD,
-        )
-        .with_inserted_attribute(Mesh::ATTRIBUTE_POSITION, vertices)
-        .with_inserted_indices(bevy::render::mesh::Indices::U32(indices))
-        .with_duplicated_vertices()
-        .with_computed_flat_normals()
+                Mesh::new(
+                    bevy::render::mesh::PrimitiveTopology::TriangleList,
+                    bevy::asset::RenderAssetUsages::MAIN_WORLD
+                        | bevy::asset::RenderAssetUsages::RENDER_WORLD,
+                )
+                .with_inserted_attribute(Mesh::ATTRIBUTE_POSITION, vertices)
+                .with_inserted_indices(bevy::render::mesh::Indices::U32(indices))
+                .with_duplicated_vertices()
+                .with_computed_flat_normals()
+            }
+            // Vertex with normals
+            6 => {
+                let normals = vertices
+                    .chunks(6)
+                    .map(|c| -> [f32; 3] { [c[3], c[4], c[5]] })
+                    .collect::<Vec<[f32; 3]>>();
+
+                let vertices = vertices
+                    .chunks(6)
+                    .map(|c| -> [f32; 3] { [c[0], c[1], c[2]] })
+                    .collect::<Vec<[f32; 3]>>();
+
+                Mesh::new(
+                    bevy::render::mesh::PrimitiveTopology::TriangleList,
+                    bevy::asset::RenderAssetUsages::MAIN_WORLD
+                        | bevy::asset::RenderAssetUsages::RENDER_WORLD,
+                )
+                .with_inserted_attribute(Mesh::ATTRIBUTE_POSITION, vertices)
+                .with_inserted_attribute(Mesh::ATTRIBUTE_NORMAL, normals)
+                .with_inserted_indices(bevy::render::mesh::Indices::U32(indices))
+            }
+            num_props => panic!("Invalid property count {num_props}"),
+        }
     }
 }
 
 impl Plugin for ManifoldPlugin {
-    fn build(&self, app: &mut App) {
-        // Convert the manifold
-
-        // add things to your app here
-    }
+    fn build(&self, _app: &mut App) {}
 }
 
 fn main() {

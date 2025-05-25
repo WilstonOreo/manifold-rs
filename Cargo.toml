@@ -42,7 +42,7 @@ bevy_example = [
 
 [dependencies.bevy]
 version = "0.16"
-optional = true  # optional so it's not used unless needed
+optional = true
 
 [dependencies.bevy_panorbit_camera]
 version = "0.26.0"
@@ -53,3 +53,9 @@ optional = true
 name = "bevy"
 path = "examples/bevy.rs"
 required-features = ["bevy_example"]
+
+# Fix for https://github.com/bevyengine/bevy/issues/1110
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld.exe"
+rustflags = ["-Zshare-generics=off"]
+# Enable a large amount of optimization in t
