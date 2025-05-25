@@ -164,7 +164,11 @@ pub fn write_ply(
         "Number of indices must be divisible by 3"
     );
 
-    writeln!(writer, "element vertex {len}", len = vertices.len())?;
+    writeln!(
+        writer,
+        "element vertex {len}",
+        len = vertices.len() / num_props
+    )?;
     writeln!(writer, "property float x")?;
     writeln!(writer, "property float y")?;
     writeln!(writer, "property float z")?;
@@ -174,8 +178,9 @@ pub fn write_ply(
         writeln!(writer, "property float nz")?;
     }
 
-    writeln!(writer, "element face {len}", len = indices.len())?;
+    writeln!(writer, "element face {len}", len = indices.len() / 3)?;
     writeln!(writer, "property list uchar int vertex_index")?;
+    writeln!(writer, "end_header")?;
 
     vertices.chunks(num_props).try_for_each(|chunk| {
         chunk.iter().try_for_each(|x| write!(writer, "{} ", x))?;
@@ -185,8 +190,6 @@ pub fn write_ply(
     indices.chunks(3).try_for_each(|triangle| {
         writeln!(writer, "3 {} {} {}", triangle[0], triangle[1], triangle[2])
     })?;
-
-    writeln!(writer, "end_header")?;
 
     Ok(())
 }
