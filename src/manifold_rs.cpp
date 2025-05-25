@@ -151,7 +151,6 @@ namespace manifold_rs
     std::unique_ptr<Mesh> mesh_from_manifold(const Manifold &manifold)
     {
         auto mesh = manifold.manifold->GetMeshGL(0);
-        assert(mesh.numProp == 3);
         return std::make_unique<Mesh>(std::move(mesh));
     }
 
