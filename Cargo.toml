@@ -33,5 +33,23 @@ cmake = "0.1"
 [dev-dependencies]
 
 [features]
-default = ["output"] # optional: defines default features
+default = ["output", "bevy_example"]
 output = ["cgmath"]
+bevy_example = [
+    "bevy",
+    "bevy_panorbit_camera",
+] # feature to bundle Bevy for the example
+
+[dependencies.bevy]
+version = "0.16"
+optional = true  # optional so it's not used unless needed
+
+[dependencies.bevy_panorbit_camera]
+version = "0.26.0"
+optional = true
+
+
+[[example]]
+name = "bevy"
+path = "examples/bevy.rs"
+required-features = ["bevy_example"]
