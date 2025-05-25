@@ -66,7 +66,25 @@ namespace manifold_rs
 
         /// @brief Rotate the manifold
         std::unique_ptr<Manifold> rotate(double x_degrees, double y_degrees = 0.0,
-                        double z_degrees = 0.0) const;
+                                         double z_degrees = 0.0) const;
+
+        /// @brief Refine manifold `n` times
+        std::unique_ptr<Manifold> refine(std::int32_t n) const;
+
+        /// Refine manifold to Length.
+        std::unique_ptr<Manifold> refine_to_length(double t) const;
+
+        /// Refine to tolerance.
+        std::unique_ptr<Manifold> refine_to_tolerance(double t) const;
+
+        /// Smooth by normals.
+        std::unique_ptr<Manifold> smooth_by_normals(std::int32_t n) const;
+
+        /// Smooth out.
+        std::unique_ptr<Manifold> smooth_out(double min_sharp_angle, double min_smoothness) const;
+
+        /// Calculate normals for the manifold and return a new one.
+        std::unique_ptr<Manifold> calculate_normals(std::int32_t normal_idx, double min_sharp_angle) const;
 
         std::unique_ptr<::manifold::Manifold> manifold;
     };
@@ -131,6 +149,9 @@ namespace manifold_rs
         Mesh();
         Mesh(::manifold::Mesh &&mesh);
         ~Mesh();
+
+        /// @brief  Number of vertex properties of the mesh.
+        std::uint32_t num_props() const;
 
         /// @brief Get the vertices of the mesh
         /// @details The vertex coefficients are in the following order:

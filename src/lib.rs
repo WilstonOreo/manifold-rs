@@ -3,6 +3,9 @@
 
 //! Rust integration of C++ library *Manifold* for geometric operations
 
+#[cfg(feature = "output")]
+pub mod output;
+
 #[cxx::bridge(namespace = "manifold_rs")]
 mod ffi {
     // C++ types and signatures exposed to Rust.
@@ -87,8 +90,37 @@ mod ffi {
             revolve_degrees: f64,
         ) -> UniquePtr<Manifold>;
 
+        /// Refine manifold.
+        fn refine(self: &Manifold, n: i32) -> UniquePtr<Manifold>;
+
+        /// Refine manifold to Length.
+        fn refine_to_length(self: &Manifold, t: f64) -> UniquePtr<Manifold>;
+
+        /// Refine to tolerance.
+        fn refine_to_tolerance(self: &Manifold, t: f64) -> UniquePtr<Manifold>;
+
+        /// Smooth by normals.
+        fn smooth_by_normals(self: &Manifold, normal_idx: i32) -> UniquePtr<Manifold>;
+
+        /// Smooth out.
+        fn smooth_out(
+            self: &Manifold,
+            min_sharp_angle: f64,
+            min_smoothness: f64,
+        ) -> UniquePtr<Manifold>;
+
+        /// Calculate normals for the manifold and return a new one.
+        fn calculate_normals(
+            self: &Manifold,
+            normal_idx: i32,
+            min_sharp_angle: f64,
+        ) -> UniquePtr<Manifold>;
+
         /// Manifold object, wrapper for C++ mesh object.
         type Mesh;
+
+        /// Get the number of vertex properties of a mesh.
+        fn num_props(self: &Mesh) -> u32;
 
         /// Get the vertices of the mesh.
         fn vertices(self: &Mesh) -> UniquePtr<CxxVector<f32>>;
@@ -165,7 +197,7 @@ impl Manifold {
     }
 
     /// Scale the manifold.
-    pub fn scale(&self, x: f64, y: f64, z: f64) -> Self{
+    pub fn scale(&self, x: f64, y: f64, z: f64) -> Self {
         Self(self.0.scale(x, y, z))
     }
 
@@ -270,6 +302,11 @@ impl Mesh {
     pub fn new(vertices: &[f32], indices: &[u32]) -> Self {
         let mesh = ffi::mesh_from_vertices(vertices, indices);
         Self(mesh)
+    }
+
+    /// Number of properties per vertex
+    pub fn num_props(&self) -> u32 {
+        self.0.num_props()
     }
 
     /// Get the vertices of the mesh.

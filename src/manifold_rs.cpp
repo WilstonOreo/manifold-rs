@@ -61,6 +61,37 @@ namespace manifold_rs
         return std::make_unique<Manifold>(manifold->Rotate(x_degrees, y_degrees, z_degrees));
     }
 
+    std::unique_ptr<Manifold> Manifold::refine(int32_t n) const
+    {
+        return std::make_unique<Manifold>(manifold->Refine(n));
+    }
+
+    std::unique_ptr<Manifold> Manifold::refine_to_length(double t) const
+    {
+        return std::make_unique<Manifold>(manifold->RefineToLength(t));
+    }
+
+    std::unique_ptr<Manifold> Manifold::refine_to_tolerance(double t) const
+    {
+        return std::make_unique<Manifold>(manifold->RefineToTolerance(t));
+    }
+
+    std::unique_ptr<Manifold> Manifold::smooth_by_normals(std::int32_t n) const
+    {
+        return std::make_unique<Manifold>(manifold->SmoothByNormals(n));
+    }
+
+    std::unique_ptr<Manifold> Manifold::smooth_out(double min_sharp_angle, double min_smoothness) const
+    {
+        return std::make_unique<Manifold>(manifold->SmoothOut(min_sharp_angle, min_smoothness));
+    }
+
+    /// Calculate normals for the manifold and return a new one.
+    std::unique_ptr<Manifold> Manifold::calculate_normals(std::int32_t normal_idx, double min_sharp_angle) const
+    {
+        return std::make_unique<Manifold>(manifold->CalculateNormals(normal_idx, min_sharp_angle));
+    }
+
     std::unique_ptr<Manifold> tetrahedron()
     {
         return std::make_unique<Manifold>(::manifold::Manifold::Tetrahedron());
@@ -101,6 +132,11 @@ namespace manifold_rs
     Mesh::Mesh(::manifold::Mesh &&mesh) : mesh(std::make_unique<::manifold::Mesh>(std::move(mesh))) {}
 
     Mesh::~Mesh() {}
+
+    std::uint32_t Mesh::num_props() const
+    {
+        return mesh->numProp;
+    }
 
     std::unique_ptr<std::vector<float>> Mesh::vertices() const
     {

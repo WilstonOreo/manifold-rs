@@ -24,10 +24,14 @@ path = "src/lib.rs"
 
 [dependencies]
 cxx = "1.0"
+cgmath = { version = "0.18.0", optional = true }
 
 [build-dependencies]
 cxx-build = "1.0"
 cmake = "0.1"
 
 [dev-dependencies]
-cgmath = "0.18.0"
+
+[features]
+default = ["output"] # optional: defines default features
+output = ["cgmath"]
