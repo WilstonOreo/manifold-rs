@@ -277,6 +277,36 @@ impl Manifold {
         ))
     }
 
+    /// Refine manifold.
+    pub fn refine(self: &Manifold, n: i32) -> Self {
+        Self(self.0.refine(n))
+    }
+
+    /// Refine manifold to Length.
+    pub fn refine_to_length(self: &Manifold, t: f64) -> Self {
+        Self(self.0.refine_to_length(t))
+    }
+
+    /// Refine to tolerance.
+    pub fn refine_to_tolerance(self: &Manifold, t: f64) -> Self {
+        Self(self.0.refine_to_tolerance(t))
+    }
+
+    /// Smooth by normals.
+    pub fn smooth_by_normals(self: &Manifold, normal_idx: i32) -> Self {
+        Self(self.0.smooth_by_normals(normal_idx))
+    }
+
+    /// Smooth out.
+    pub fn smooth_out(self: &Manifold, min_sharp_angle: f64, min_smoothness: f64) -> Self {
+        Self(self.0.smooth_out(min_sharp_angle, min_smoothness))
+    }
+
+    /// Calculate normals for the manifold and return a new one.
+    pub fn calculate_normals(self: &Manifold, normal_idx: i32, min_sharp_angle: f64) -> Self {
+        Self(self.0.calculate_normals(normal_idx, min_sharp_angle))
+    }
+
     /// Get the mesh representation of the manifold.
     pub fn to_mesh(&self) -> Mesh {
         Mesh(ffi::mesh_from_manifold(&self.0))
