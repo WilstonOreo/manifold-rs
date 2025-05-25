@@ -2761,7 +2761,7 @@ dependencies = [
 
 [[package]]
 name = "manifold-rs"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "bevy",
  "bevy_panorbit_camera",
