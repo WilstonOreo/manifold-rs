@@ -183,7 +183,7 @@ namespace manifold_rs
             // Create SimplePolygon from rust::Slice<const float> via memcpy
             // without using a loop
             ::manifold::SimplePolygon p(polygon_data.size() / 2);
-            memcpy(p.data(), polygon_data.data(), polygon_data.size() * sizeof(double));
+            memcpy((void *)p.data(), polygon_data.data(), polygon_data.size() * sizeof(double));
             polygons.push_back(p);
         }
         return polygons;
