@@ -4,16 +4,42 @@
 use cmake::Config;
 
 fn main() {
+    use std::env;
+    use std::fs;
+
     // Skip building the library when building documentation
-    if std::env::var("DOCS_RS").is_ok() {
+    if env::var("DOCS_RS").is_ok() {
         return;
+    }
+
+    // Fix for https://github.com/bevyengine/bevy/issues/1110
+    let target = env::var("TARGET").unwrap_or_default();
+    let bevy_enabled = env::var("CARGO_FEATURE_BEVY_EXAMPLE").is_ok();
+
+    if target == "x86_64-pc-windows-msvc" && bevy_enabled {
+        let out_dir =
+            std::path::PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap()).join(".cargo");
+
+        fs::create_dir_all(&out_dir).expect("Failed to create .cargo dir");
+
+        let config_toml = out_dir.join("config.toml");
+
+        fs::write(
+            config_toml,
+            r#"
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld.exe"
+rustflags = ["-Zshare-generics=off"]
+"#,
+        )
+        .expect("Failed to write config.toml");
     }
 
     let out_dir = std::env::var("OUT_DIR").unwrap();
 
-    std::env::set_var("CMAKE_PREFIX_PATH", format!("{out_dir}/build/glm"));
-    std::env::set_var("CMAKE_GENERATOR", "Ninja");
-    std::env::set_var("CMAKE_BUILD_TYPE", "Release");
+    env::set_var("CMAKE_PREFIX_PATH", format!("{out_dir}/build/glm"));
+    env::set_var("CMAKE_GENERATOR", "Ninja");
+    env::set_var("CMAKE_BUILD_TYPE", "Release");
 
     let cxxflags = if cfg!(windows) { "/EHsc" } else { "" };
 
