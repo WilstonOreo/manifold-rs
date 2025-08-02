@@ -31,7 +31,7 @@ cxx-build = "1.0"
 cmake = "0.1"
 
 [features]
-default = ["output"]
+default = []
 output = ["cgmath"]
 bevy_example = [
     "bevy",
@@ -46,8 +46,21 @@ optional = true
 version = "0.26.0"
 optional = true
 
+[[example]]
+name = "simple"
+path = "examples/simple.rs"
 
 [[example]]
 name = "bevy"
 path = "examples/bevy.rs"
 required-features = ["bevy_example"]
+
+[[example]]
+name = "write_ply"
+path = "examples/write_ply.rs"
+required-features = ["output"]
+
+[[example]]
+name = "write_stl"
+path = "examples/write-stl.rs"
+required-features = ["output"]

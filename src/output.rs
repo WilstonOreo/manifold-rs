@@ -7,7 +7,7 @@ use crate::{Manifold, Mesh};
 
 type Vec3 = cgmath::Vector3<f32>;
 
-trait Vertex {
+pub trait Vertex {
     fn from_slice_and_offset(slice: &[f32], offset: usize) -> Self;
 
     /// Return position
@@ -22,7 +22,7 @@ trait Vertex {
 
 /// Vertex with position
 #[derive(Clone, Copy, Debug)]
-struct VertexPos3 {
+pub struct VertexPos3 {
     /// position
     pub pos: Vec3,
 }
@@ -49,7 +49,7 @@ impl Vertex for VertexPos3 {
 }
 
 /// A Vertex with Normal and Position
-struct VertexPos3Normal {
+pub struct VertexPos3Normal {
     pub pos: Vec3,
     pub normal: Vec3,
 }
@@ -77,7 +77,7 @@ impl Vertex for VertexPos3Normal {
 
 /// Triangle
 #[derive(Clone, Copy, Debug)]
-struct Triangle<T>(pub T, pub T, pub T);
+pub struct Triangle<T>(pub T, pub T, pub T);
 
 impl Triangle<VertexPos3> {
     /// Calculate the normal of the triangle
@@ -183,7 +183,7 @@ pub fn write_ply(
     writeln!(writer, "end_header")?;
 
     vertices.chunks(num_props).try_for_each(|chunk| {
-        chunk.iter().try_for_each(|x| write!(writer, "{} ", x))?;
+        chunk.iter().try_for_each(|x| write!(writer, "{x} "))?;
         writeln!(writer)
     })?;
 
