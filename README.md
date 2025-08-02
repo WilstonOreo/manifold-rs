@@ -16,9 +16,9 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-manifold-rs = "0.4"
+manifold-rs = "0.6"
 ```
 
-## Example
+## Examples
 
-In [examples/write_stl.rs](examples/write_stl.rs) file contains several examples demonstrating how to use the library.
+The [examples](examples) directory contains several examples demonstrating how to use the library.
