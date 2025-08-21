@@ -42,6 +42,9 @@ namespace manifold_rs
         Manifold(::manifold::Manifold &&manifold);
         ~Manifold();
 
+        /// @brief Does Manifold have triangles?
+        bool is_empty() const;
+
         /// @brief Slice the manifold at a given height
         std::unique_ptr<Polygons> slice(double height) const;
 

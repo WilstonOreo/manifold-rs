@@ -27,6 +27,11 @@ namespace manifold_rs
     Manifold::Manifold(::manifold::Manifold &&manifold) : manifold(std::make_unique<::manifold::Manifold>(std::move(manifold))) {}
     Manifold::~Manifold() {}
 
+    bool Manifold::is_empty() const
+    {
+        return manifold->IsEmpty();
+    }
+
     std::unique_ptr<Polygons> Manifold::slice(double height) const
     {
         return std::make_unique<Polygons>(manifold->Slice(height));

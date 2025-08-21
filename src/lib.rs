@@ -23,6 +23,8 @@ mod ffi {
         /// Manifold object, wrapper for C++ manifold object.
         type Manifold;
 
+        fn is_empty(self: &Manifold) -> bool;
+
         /// Slice the manifold into a set of polygons.
         fn slice(self: &Manifold, height: f64) -> UniquePtr<Polygons>;
 
@@ -171,6 +173,11 @@ impl Polygons {
 pub struct Manifold(cxx::UniquePtr<ffi::Manifold>);
 
 impl Manifold {
+    /// Does [`Manifold`] contain triangles?
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
     /// Slice the manifold into a set of polygons.
     pub fn slice(&self, height: f64) -> Polygons {
         Polygons(self.0.slice(height))
