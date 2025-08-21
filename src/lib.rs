@@ -31,6 +31,12 @@ mod ffi {
         /// Project the manifold onto a plane and return the resulting polygons.
         fn project(self: &Manifold) -> UniquePtr<Polygons>;
 
+        /// Create an empty manifold.
+        fn empty() -> UniquePtr<Manifold>;
+
+        /// Create a tetrahedron.
+        fn tetrahedron() -> UniquePtr<Manifold>;
+
         /// Create a sphere manifold.
         fn sphere(radius: f64, segments: u32) -> UniquePtr<Manifold>;
 
@@ -211,6 +217,16 @@ impl Manifold {
     /// Rotate the manifold.
     pub fn rotate(&self, x: f64, y: f64, z: f64) -> Self {
         Self(self.0.rotate(x, y, z))
+    }
+
+    /// Create empty manifold.
+    pub fn empty() -> Self {
+        Self(ffi::empty())
+    }
+
+    /// Create tetrahedron manifold.
+    pub fn tetrahedron() -> Self {
+        Self(ffi::tetrahedron())
     }
 
     /// Create a sphere manifold.

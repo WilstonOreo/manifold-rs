@@ -97,6 +97,11 @@ namespace manifold_rs
         return std::make_unique<Manifold>(manifold->CalculateNormals(normal_idx, min_sharp_angle));
     }
 
+    std::unique_ptr<Manifold> empty()
+    {
+        return std::make_unique<Manifold>();
+    }
+
     std::unique_ptr<Manifold> tetrahedron()
     {
         return std::make_unique<Manifold>(::manifold::Manifold::Tetrahedron());

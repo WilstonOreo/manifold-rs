@@ -93,22 +93,25 @@ namespace manifold_rs
     };
 
     /// @brief Create a new empty manifold
+    std::unique_ptr<Manifold> empty();
+
+    /// @brief Create a tetrahedron.
     std::unique_ptr<Manifold> tetrahedron();
 
-    /// @brief Create a cube
+    /// @brief Create a cube.
     /// @param x_size A size of the cube in x direction
     /// @param y_size A size of the cube in y direction
     /// @param z_size A size of the cube in z direction
     /// @return A new cube as a Manifold
     std::unique_ptr<Manifold> cube(double x_size, double y_size, double z_size);
 
-    /// @brief Create a sphere
+    /// @brief Create a sphere.
     /// @param radius Radius of the sphere
     /// @param circular_segments  Number of circular segments
     /// @return A new sphere as a Manifold
     std::unique_ptr<Manifold> sphere(double radius, uint32_t circular_segments);
 
-    /// @brief Create a cylinder
+    /// @brief Create a cylinder.
     /// @param radius_low Lower radius of the cylinder
     /// @param radius_high Higher radius of the cylinder
     /// @param height Height of the cylinder
