@@ -49,6 +49,7 @@ rustflags = ["-Zshare-generics=off"]
     Config::new("manifold")
         .cxxflag(cxxflags) //  MSVC flag to enable exception handling
         .define("CMAKE_BUILD_TYPE", "Release")
+        .define("CMAKE_INSTALL_LIBDIR", "lib")
         .define("MANIFOLD_CROSS_SECTION", "ON")
         .define("MANIFOLD_TEST", "OFF")
         .define("BUILD_SHARED_LIBS", "OFF")
