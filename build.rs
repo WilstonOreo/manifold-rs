@@ -70,7 +70,11 @@ rustflags = ["-Zshare-generics=off"]
     println!("cargo:rustc-link-lib=static=manifold");
 
     println!("cargo:rustc-link-search={out_dir}/build/_deps/clipper2-build");
-    println!("cargo:rustc-link-lib=static=Clipper2");
+    if env::var("CLIPPER_DYNAMIC").is_ok() {
+        println!("cargo:rustc-link-lib=Clipper2");
+    } else {
+        println!("cargo:rustc-link-lib=static=Clipper2");
+    }
 
     println!("cargo:rerun-if-changed=src/lib.rs");
     println!("cargo:rerun-if-changed=src/manifold_rs.h");
