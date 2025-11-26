@@ -51,6 +51,7 @@ rustflags = ["-Zshare-generics=off"]
         .define("CMAKE_BUILD_TYPE", "Release")
         .define("CMAKE_INSTALL_LIBDIR", "lib")
         .define("MANIFOLD_CROSS_SECTION", "ON")
+        .define("MANIFOLD_USE_BUILTIN_CLIPPER2", "ON")
         .define("MANIFOLD_TEST", "OFF")
         .define("BUILD_SHARED_LIBS", "OFF")
         .define("MANIFOLD_CBIND", "OFF")
