@@ -1,9 +1,9 @@
-# Copyright © 2024 The µCAD authors <info@ucad.xyz>
+# Copyright © 2025 The µcad authors <info@ucad.xyz>
 # SPDX-License-Identifier: Apache-2.0
 
 [package]
 name = "manifold-rs"
-version = "0.6.2"
+version = "0.6.3"
 description = "Rust wrapper for manifold"
 edition = "2021"
 license = "MIT OR Apache-2.0"
