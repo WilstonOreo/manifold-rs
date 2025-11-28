@@ -50,8 +50,7 @@ rustflags = ["-Zshare-generics=off"]
         .cxxflag(cxxflags) //  MSVC flag to enable exception handling
         .define("CMAKE_BUILD_TYPE", "Release")
         .define("CMAKE_INSTALL_LIBDIR", "lib")
-        .define("MANIFOLD_CROSS_SECTION", "ON")
-        .define("MANIFOLD_USE_BUILTIN_CLIPPER2", "ON")
+        .define("MANIFOLD_CROSS_SECTION", "OFF")
         .define("MANIFOLD_TEST", "OFF")
         .define("BUILD_SHARED_LIBS", "OFF")
         .define("MANIFOLD_CBIND", "OFF")
@@ -69,9 +68,6 @@ rustflags = ["-Zshare-generics=off"]
 
     println!("cargo:rustc-link-search={out_dir}/lib");
     println!("cargo:rustc-link-lib=static=manifold");
-
-    println!("cargo:rustc-link-search={out_dir}/build/_deps/clipper2-build");
-    println!("cargo:rustc-link-lib=static=Clipper2");
 
     println!("cargo:rerun-if-changed=src/lib.rs");
     println!("cargo:rerun-if-changed=src/manifold_rs.h");
