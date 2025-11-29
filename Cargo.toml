@@ -62,5 +62,5 @@ required-features = ["output"]
 
 [[example]]
 name = "write_stl"
-path = "examples/write-stl.rs"
+path = "examples/write_stl.rs"
 required-features = ["output"]
