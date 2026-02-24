@@ -1,4 +1,4 @@
-// Copyright © 2024 The µCAD authors <info@ucad.xyz>
+// Copyright © 2026 The µcad authors <info@microcad.xyz>
 // SPDX-License-Identifier: Apache-2.0
 
 #include "manifold_rs.h"

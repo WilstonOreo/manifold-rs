@@ -1,4 +1,4 @@
-// Copyright © 2024 The µCAD authors <info@ucad.xyz>
+// Copyright © 2026 The µCAD authors <info@microcad.xyz>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 use cmake::Config;
