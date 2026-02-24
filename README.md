@@ -16,7 +16,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-manifold-rs = "0.6"
+manifold-rs = "0.7"
 ```
 
 ## Examples
