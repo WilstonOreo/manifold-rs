@@ -1,5 +1,7 @@
 # Manifold-rs: Rust wrappers for Manifold
 
+**This project has been archived. Please use (`manifold-rust`)[https://github.com/larsbrubaker/manifold-rust] as a replacement.**
+
 [![Status](https://github.com/WilstonOreo/manifold-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/WilstonOreo/manifold-rs/actions)
 [![Crates.io](https://img.shields.io/crates/v/manifold-rs.svg)](https://crates.io/crates/manifold-rs)
 [![Documentation](https://docs.rs/manifold-rs/badge.svg)](https://docs.rs/manifold-rs/)
